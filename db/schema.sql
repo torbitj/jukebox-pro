@@ -1,12 +1,13 @@
 DROP TABLE IF EXISTS playlists_tracks;
 DROP TABLE IF EXISTS playlists;
 DROP TABLE IF EXISTS tracks;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username TEXT NOT NULL,
   password TEXT NOT NULL
-)
+);
 
 CREATE TABLE tracks (
   id serial PRIMARY KEY,
