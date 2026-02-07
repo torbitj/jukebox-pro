@@ -13,3 +13,7 @@ export const createUser = async ({username, password}) => {
   const token = jwt.sign({ user }, process.env.JWT_SECRET);
   return token;
 }
+
+export const userLogin = async ({username, password}) => {
+  
+}
