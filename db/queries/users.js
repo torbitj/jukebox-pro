@@ -35,3 +35,13 @@ export const authenticateUser = async ({username, password}) => {
   }
   return token;
 }
+
+export const getUserIdByToken = async (token) => {
+  const sql = `
+    SELECT * FROM users
+    WHERE users.username = $1
+  `;
+  const validToken = jwt.verify(token, process.env.JWT_SECRET);
+  const { rows: [user] } = await db.query(sql, [validToken.username])
+  return user.id;
+}
