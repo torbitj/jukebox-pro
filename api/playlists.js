@@ -11,21 +11,23 @@ import { createPlaylistTrack } from "#db/queries/playlists_tracks";
 import { getTracksByPlaylistId } from "#db/queries/tracks";
 import { getUserIdByToken } from "#db/queries/users";
 
+router.use(express.json())
+
 router.use(async (req, res, next) => {
   try {
     const headerData = req.headers.authorization;
     if (!headerData) return res.status(401).send('You are not authorized');
     const token = headerData.split(' ')[1];
     req.userId = await getUserIdByToken(token);
-    console.log(userId)
     next();
-  } catch {
+  } catch (e) {
     if (e.name === "JsonWebTokenError") return res.status(401).send("You are not authorized");
   }
 })
 
 router.get("/", async (req, res) => {
-  const playlists = await getPlaylists();
+  const { userId } = req;
+  const playlists = await getPlaylists(userId);
   res.send(playlists);
 });
 
