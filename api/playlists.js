@@ -17,6 +17,7 @@ router.use(async (req, res, next) => {
     if (!headerData) return res.status(401).send('You are not authorized');
     const token = headerData.split(' ')[1];
     req.userId = await getUserIdByToken(token);
+    console.log(userId)
     next();
   } catch {
     if (e.name === "JsonWebTokenError") return res.status(401).send("You are not authorized");
