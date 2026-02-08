@@ -1,4 +1,4 @@
-import { createUser } from '#db/queries/users';
+import { authenticateUser, createUser } from '#db/queries/users';
 import express from 'express';
 
 const usersRouter = express.Router();
@@ -13,7 +13,21 @@ usersRouter.use((req, res, next) => {
 })
 
 usersRouter.post('/register', async(req, res, next) => {
-  const { user } = req;
-  const newUserToken = await createUser(user)
-  res.status(201).send(newUserToken)
+  try {
+    const { user } = req;
+    const newUserToken = await createUser(user)
+    res.status(201).send(newUserToken)
+  } catch (err) {
+    next(err)
+  }
+})
+
+usersRouter.post('/login', async (req, res, next) => {
+  try {
+    const { user } = req;
+    const validUserToken = await authenticateUser(user);
+    res.send(validUserToken);
+  } catch (e) {
+    res.status(400).send(e.message);
+  }
 })

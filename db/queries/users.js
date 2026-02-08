@@ -14,6 +14,24 @@ export const createUser = async ({username, password}) => {
   return token;
 }
 
-export const userLogin = async ({username, password}) => {
-  
+export const authenticateUser = async ({username, password}) => {
+  const sql = `
+    SELECT * FROM users
+    WHERE users.username = $1
+  `;
+
+  let validPassword = false;
+  let token = null;
+  const { rows: [user] } = await db.query(sql, [username]);
+  if (user) {
+    validPassword = await bcrypt.compare(password, user.password);
+  } else {
+    throw new Error('Invalid username or password.')
+  }
+  if (validPassword) {
+    token = jwt.sign({username}, process.env.JWT_SECRET)
+  } else {
+    throw new Error('Invalid username or password.')
+  }
+  return token;
 }
