@@ -32,20 +32,22 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const { userId } = req;
   if (!req.body) return res.status(400).send("Request body is required.");
 
   const { name, description } = req.body;
-  if (!name || !description)
+  if (!name || !description || !userId)
     return res.status(400).send("Request body requires: name, description");
 
-  const playlist = await createPlaylist(name, description);
+  const playlist = await createPlaylist(name, description, userId);
   res.status(201).send(playlist);
 });
 
 router.param("id", async (req, res, next, id) => {
+  const { userId } = req;
   const playlist = await getPlaylistById(id);
+  if (playlist.user_id !== userId) return res.status(403).send("You are not authorized");
   if (!playlist) return res.status(404).send("Playlist not found.");
-
   req.playlist = playlist;
   next();
 });
